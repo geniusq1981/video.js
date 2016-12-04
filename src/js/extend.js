@@ -1,4 +1,5 @@
 import log from './utils/log';
+import {isObject} from './utils/obj';
 
 /*
  * @file extend.js
@@ -7,7 +8,7 @@ import log from './utils/log';
  * Both work the same but node adds `super_` to the subClass
  * and Bable adds the superClass as __proto__. Both seem useful.
  */
-const _inherits = function (subClass, superClass) {
+const _inherits = function(subClass, superClass) {
   if (typeof superClass !== 'function' && superClass !== null) {
     throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);
   }
@@ -44,13 +45,14 @@ const _inherits = function (subClass, superClass) {
  * });
  * ```
  */
-const extendFn = function(superClass, subClassMethods={}) {
+const extendFn = function(superClass, subClassMethods = {}) {
   let subClass = function() {
     superClass.apply(this, arguments);
   };
+
   let methods = {};
 
-  if (typeof subClassMethods === 'object') {
+  if (isObject(subClassMethods)) {
     if (typeof subClassMethods.init === 'function') {
       log.warn('Constructor logic via init() is deprecated; please use constructor() instead.');
       subClassMethods.constructor = subClassMethods.init;
@@ -66,7 +68,7 @@ const extendFn = function(superClass, subClassMethods={}) {
   _inherits(subClass, superClass);
 
   // Extend subObj's prototype with functions and other properties from props
-  for (var name in methods) {
+  for (const name in methods) {
     if (methods.hasOwnProperty(name)) {
       subClass.prototype[name] = methods[name];
     }
